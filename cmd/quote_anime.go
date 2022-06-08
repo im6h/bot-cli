@@ -50,12 +50,7 @@ func fetchRandomQuote() {
 		log.Panicf("error when unmarshaling data random quote: %v\n", err)
 	}
 
-	dataJson, err := json.MarshalIndent(quote, "", " ")
-	if err != nil {
-		log.Panicf("error when unmarshaling data random quote: %v\n", err)
-	}
-
-	fmt.Println(string(dataJson))
+	fmt.Printf("%s\n \t %s in %s\n", quote.Quote, quote.Character, quote.Anime)
 }
 
 func quoteAnimeCmdExecute() {
