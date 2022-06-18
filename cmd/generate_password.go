@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/m1/go-generate-password/generator"
 	"github.com/spf13/cobra"
@@ -34,6 +35,10 @@ func generateRandomPassword() string {
 	}
 	g, _ := generator.New(&config)
 
-	pwd, _ := g.Generate()
+	pwd, err := g.Generate()
+	if err != nil {
+		log.Fatalf("Error when generate password: %v", err)
+	}
+
 	return *pwd
 }

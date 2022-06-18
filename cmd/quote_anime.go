@@ -46,6 +46,22 @@ func responseData(url string) []byte {
 	return body
 }
 
+func fetchQuoteByCharacterName(name string, page string) {
+	var url string = fmt.Sprintf("https://animechan.vercel.app/api/quotes/character?name=%s", name)
+	var quotes []*quote
+
+	body := responseData(url)
+
+	err := json.Unmarshal(body, &quotes)
+	if err != nil {
+		log.Panicf("error when unmarshaling data in fetchQuoteByCharacterName: %v\n", err)
+	}
+
+	for _, quote := range quotes {
+		fmt.Printf(`"%s" in %s`+"\n", quote.Quote, quote.Anime)
+	}
+}
+
 func fetchQuoteByAnimeName(name string, page string) {
 	var url string = fmt.Sprintf("https://animechan.vercel.app/api/quotes/anime?title=%s&page=%s", name, page)
 	var quotes []*quote
@@ -58,7 +74,7 @@ func fetchQuoteByAnimeName(name string, page string) {
 	}
 
 	for _, quote := range quotes {
-		fmt.Printf("%s by %s\n", quote.Quote, quote.Character)
+		fmt.Printf(`"%s" by %s`+"\n", quote.Quote, quote.Character)
 	}
 
 }
