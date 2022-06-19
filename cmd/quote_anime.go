@@ -17,20 +17,22 @@ type quote struct {
 }
 
 var quoteAnimeCmd = &cobra.Command{
-	Use:   "anime",
+	Use:   "anime [OPTIONS]",
 	Short: "Fetch quote anime",
 	Long:  `Use to fetch anime's quote`,
 	Run: func(cmd *cobra.Command, args []string) {
-		quoteAnimeCmdExecute(args)
+		quoteAnimeCmdExecute(cmd, args)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(quoteAnimeCmd)
+
+	quoteAnimeCmd.PersistentFlags().String("name", "", "Search quote by name of anime")
+	quoteAnimeCmd.PersistentFlags().String("charactor", "", "Search quote by name of charactor")
 }
 
 func responseData(url string) []byte {
-
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Panicf("error when fetch random quote: %v\n", err)
@@ -46,8 +48,8 @@ func responseData(url string) []byte {
 	return body
 }
 
-func fetchQuoteByCharacterName(name string, page string) {
-	var url string = fmt.Sprintf("https://animechan.vercel.app/api/quotes/character?name=%s", name)
+func fetchQuoteByCharactorName(name string, page string) {
+	var url string = fmt.Sprintf("https://animechan.vercel.app/api/quotes/character?name=%s&page=%s", name, page)
 	var quotes []*quote
 
 	body := responseData(url)
@@ -93,24 +95,33 @@ func fetchRandomQuote() {
 	fmt.Printf("%s\n \t %s in %s\n", quote.Quote, quote.Character, quote.Anime)
 }
 
-func quoteAnimeCmdExecute(args []string) {
-	if len(args) < 1 {
+func quoteAnimeCmdExecute(cmd *cobra.Command, args []string) {
+	animeName, err := cmd.Flags().GetString("name")
+	if err != nil {
+		log.Fatalf("Error with use flags quoteAnimeExecute: %v", err)
+	}
+
+	charactor, err := cmd.Flags().GetString("charactor")
+	if err != nil {
+		log.Fatalf("Error with use flags quoteAnimeExecute: %v", err)
+	}
+
+	if animeName == "" && charactor == "" {
 		fetchRandomQuote()
-		return
 	}
 
-	if len(args) == 1 {
-		title := args[0]
+	var page string = "1"
 
-		fetchQuoteByAnimeName(title, "1")
-		return
+	if len(args) > 0 {
+		page = args[0]
 	}
 
-	if len(args) > 1 {
-		title := args[0]
-		page := args[1]
-
-		fetchQuoteByAnimeName(title, page)
-		return
+	if animeName != "" {
+		fetchQuoteByAnimeName(animeName, page)
 	}
+
+	if charactor != "" {
+		fetchQuoteByCharactorName(charactor, page)
+	}
+
 }
