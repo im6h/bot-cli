@@ -14,8 +14,7 @@ var generatePasswordCmd = &cobra.Command{
 	Short: "A command generate random password",
 	Long:  `Generaate random password to prevent lacking`,
 	Run: func(cmd *cobra.Command, args []string) {
-		password := generateRandomPassword()
-		fmt.Printf("Your password: %v\n", password)
+		generatePasswordExecute()
 	},
 }
 
@@ -41,4 +40,9 @@ func generateRandomPassword() string {
 	}
 
 	return *pwd
+}
+
+func generatePasswordExecute() {
+	password := generateRandomPassword()
+	fmt.Printf("Your password: %v\n", password)
 }

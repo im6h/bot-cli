@@ -17,9 +17,9 @@ type quote struct {
 }
 
 var quoteAnimeCmd = &cobra.Command{
-	Use:   "anime [OPTIONS]",
+	Use:   "anime [OPTIONS] [PAGE]",
 	Short: "Fetch quote anime",
-	Long:  `Use to fetch anime's quote`,
+	Long:  `Use to fetch anime's quote: random, with charactor, with anime`,
 	Run: func(cmd *cobra.Command, args []string) {
 		quoteAnimeCmdExecute(cmd, args)
 	},
