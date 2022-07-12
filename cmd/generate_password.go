@@ -12,7 +12,7 @@ import (
 var generatePasswordCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "A command generate random password",
-	Long:  `Generaate random password to prevent lacking`,
+	Long:  `Generate random password to prevent lacking`,
 	Run: func(cmd *cobra.Command, args []string) {
 		generatePasswordExecute()
 	},
@@ -24,8 +24,8 @@ func init() {
 
 func generateRandomPassword() string {
 	config := generator.Config{
-		Length:                     15,
-		IncludeSymbols:             false,
+		Length:                     20,
+		IncludeSymbols:             true,
 		IncludeNumbers:             true,
 		IncludeLowercaseLetters:    true,
 		IncludeUppercaseLetters:    true,
