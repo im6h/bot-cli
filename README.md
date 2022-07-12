@@ -1,3 +1,14 @@
+### Install 
+1. Install program in global use command:
+```
+make publish
+```
+
+2. For debug and build app use command: 
+```
+make build
+```
+
 ### Feature:
 
 1. Fetch quote from anime api (for funny)
@@ -25,3 +36,5 @@
  ```sh
 	go-cli generate
  ```
+
+3. Fetch article from `dev.to` api: 
