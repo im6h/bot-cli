@@ -12,7 +12,7 @@ import (
 var httpDevtoCmd = &cobra.Command{
 	Use:   "devto",
 	Short: "A brief description of your command",
-	Long:  "",
+	Long:  "Fetch dev.to article from api with flag",
 	Run: func(cmd *cobra.Command, args []string) {
 		httpDevExecute(cmd, args)
 	},
@@ -30,8 +30,8 @@ func init() {
 	rootCmd.AddCommand(httpDevtoCmd)
 }
 
-func fetchDevtoArticle() {
-	var url string = fmt.Sprintf("https://dev.to/api/articles?page=1&per_page=10&top=2")
+func fetchDevtoTopArticle(page, per_page string) {
+	var url string = fmt.Sprintf("https://dev.to/api/articles?page=%s&per_page=%s", page, per_page)
 	var articles []*devtoArtile
 
 	body := responseData(url)
@@ -51,5 +51,17 @@ func fetchDevtoArticle() {
 }
 
 func httpDevExecute(cmd *cobra.Command, args []string) {
-	fetchDevtoArticle()
+	var page string = "1"
+	var perPage string = "10"
+
+	if args[0] != "" {
+		page = args[0]
+	}
+
+	if args[1] != "" {
+		perPage = args[1]
+	}
+
+	fetchDevtoTopArticle(page, perPage)
+
 }
