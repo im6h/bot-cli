@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
 
@@ -18,12 +19,20 @@ var httpDevtoCmd = &cobra.Command{
 	},
 }
 
+type user struct {
+	Name            string `json:"name"`
+	TwitterUsername string `json:"twitter_username"`
+	GithubUsername  string `json:"github_username"`
+	WebsiteUrl      string `json:"website_url"`
+}
 type devtoArtile struct {
 	Id          int    `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Publish     string `json:"published_timestamp"`
 	Url         string `json:"url"`
+	Tags        string `json:"tags"`
+	User        user   `json:"user"`
 }
 
 func init() {
@@ -41,8 +50,39 @@ func fetchDevtoTopArticle(page, per_page string) {
 		log.Panicf("httpDevto - fetchDevtoArticle - error when unmarshaling data: %s\n", err)
 	}
 
-	for _, art := range articles {
-		article, err := json.MarshalIndent(*art, "", " ")
+	result := lo.Map(articles, func(x *devtoArtile, _ int) struct {
+		Id          int    `json:"id"`
+		Title       string `json:"title"`
+		Description string `json:"description"`
+		Publish     string `json:"published_timestamp"`
+		Url         string `json:"url"`
+		Tags        string `json:"tags"`
+		Username    string `json:"username"`
+		Github      string `json:"github"`
+	} {
+		return struct {
+			Id          int    `json:"id"`
+			Title       string `json:"title"`
+			Description string `json:"description"`
+			Publish     string `json:"published_timestamp"`
+			Url         string `json:"url"`
+			Tags        string `json:"tags"`
+			Username    string `json:"username"`
+			Github      string `json:"github"`
+		}{
+			Id:          x.Id,
+			Title:       x.Title,
+			Description: x.Description,
+			Publish:     x.Publish,
+			Url:         x.Url,
+			Tags:        x.Tags,
+			Username:    x.User.Name,
+			Github:      fmt.Sprintf("https://github.com/%s", x.User.GithubUsername),
+		}
+	})
+
+	for _, art := range result {
+		article, err := json.MarshalIndent(art, "", "  ")
 		if err != nil {
 			log.Panicf("httpDevto - fetchDevtoArticle - error when marshaling data: %s\n", err)
 		}
@@ -54,12 +94,13 @@ func httpDevExecute(cmd *cobra.Command, args []string) {
 	var page string = "1"
 	var perPage string = "10"
 
-	if args[0] != "" {
-		page = args[0]
-	}
-
-	if args[1] != "" {
-		perPage = args[1]
+	if len(args) > 0 {
+		if args[0] != "" {
+			page = args[0]
+		}
+		if args[1] != "" {
+			perPage = args[1]
+		}
 	}
 
 	fetchDevtoTopArticle(page, perPage)

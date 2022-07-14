@@ -22,7 +22,7 @@ var dockerBackupCmd = &cobra.Command{
 		if containerId == "" {
 			log.Fatal("Need container id")
 		}
-		if "" == dbPassword {
+		if dbPassword == "" {
 			log.Fatal("Need dbPassword")
 		}
 		if username == "" {
