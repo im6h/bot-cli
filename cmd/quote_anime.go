@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -92,7 +93,8 @@ func fetchRandomQuote() {
 		log.Panicf("error when unmarshaling data random quote: %v\n", err)
 	}
 
-	fmt.Printf("%s\n \t %s in %s\n", quote.Quote, quote.Character, quote.Anime)
+	fmt.Printf("%s\n", color.YellowString(quote.Quote))
+	fmt.Printf("\t %s in %s\n", color.RedString(quote.Character), color.BlueString(quote.Anime))
 }
 
 func quoteAnimeCmdExecute(cmd *cobra.Command, args []string) {
