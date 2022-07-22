@@ -50,7 +50,7 @@ func fetchDevtoTopArticle(page, per_page string) {
 		log.Panicf("httpDevto - fetchDevtoArticle - error when unmarshaling data: %s\n", err)
 	}
 
-	result := lo.Map(articles, func(x *devtoArtile, _ int) struct {
+	mapArticles := lo.Map(articles, func(x *devtoArtile, _ int) struct {
 		Id          int    `json:"id"`
 		Title       string `json:"title"`
 		Description string `json:"description"`
@@ -81,7 +81,7 @@ func fetchDevtoTopArticle(page, per_page string) {
 		}
 	})
 
-	for _, art := range result {
+	for _, art := range mapArticles {
 		article, err := json.MarshalIndent(art, "", "  ")
 		if err != nil {
 			log.Panicf("httpDevto - fetchDevtoArticle - error when marshaling data: %s\n", err)

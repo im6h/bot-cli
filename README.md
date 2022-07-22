@@ -45,3 +45,11 @@
    ```
 
 3. Fetch article from `dev.to` api:
+
+   - Use command to fetch top article in `dev.to` site(default limit=10,size=1):
+
+   ```sh
+       go-cli devto
+
+       go-cli devto 1 10
+   ```

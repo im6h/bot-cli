@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/fatih/color"
 	"github.com/m1/go-generate-password/generator"
 	"github.com/spf13/cobra"
 )
@@ -44,5 +45,5 @@ func generateRandomPassword() string {
 
 func generatePasswordExecute() {
 	password := generateRandomPassword()
-	fmt.Printf("Your password: %v\n", password)
+	fmt.Printf("Your password: %v\n", color.RedString(password))
 }
