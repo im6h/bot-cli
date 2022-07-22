@@ -43,7 +43,7 @@ func fetchDevtoTopArticle(page, per_page string) {
 	var url string = fmt.Sprintf("https://dev.to/api/articles?page=%s&per_page=%s", page, per_page)
 	var articles []*devtoArtile
 
-	body := responseData(url)
+	body := ResponseData(url)
 
 	err := json.Unmarshal(body, &articles)
 	if err != nil {

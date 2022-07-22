@@ -3,9 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -33,27 +31,11 @@ func init() {
 	quoteAnimeCmd.PersistentFlags().String("charactor", "", "Search quote by name of charactor")
 }
 
-func responseData(url string) []byte {
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Panicf("error when fetch random quote: %v\n", err)
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Panicf("error when read data random quote: %v\n", err)
-	}
-
-	return body
-}
-
 func fetchQuoteByCharactorName(name string, page string) {
 	var url string = fmt.Sprintf("https://animechan.vercel.app/api/quotes/character?name=%s&page=%s", name, page)
 	var quotes []*quote
 
-	body := responseData(url)
+	body := ResponseData(url)
 
 	err := json.Unmarshal(body, &quotes)
 	if err != nil {
@@ -69,7 +51,7 @@ func fetchQuoteByAnimeName(name string, page string) {
 	var url string = fmt.Sprintf("https://animechan.vercel.app/api/quotes/anime?title=%s&page=%s", name, page)
 	var quotes []*quote
 
-	body := responseData(url)
+	body := ResponseData(url)
 
 	err := json.Unmarshal(body, &quotes)
 	if err != nil {
@@ -86,7 +68,7 @@ func fetchRandomQuote() {
 	var url string = "https://animechan.vercel.app/api/random"
 	var quote *quote
 
-	body := responseData(url)
+	body := ResponseData(url)
 
 	err := json.Unmarshal(body, &quote)
 	if err != nil {
