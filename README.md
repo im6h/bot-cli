@@ -55,10 +55,10 @@
    ```
 4. Generate example environment file from `.env`:
   
-  - Use command to generate `.env.example`.
+   - Use command to generate `.env.example`:
   
-  ```sh
+   ```sh
       go-cli cp_env
-  ```
+   ```
 
-  Note: Use command inside folder contains `.env.example` file.
+  Note: Use command inside folder contains `.env` file.
