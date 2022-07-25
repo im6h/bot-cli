@@ -53,3 +53,12 @@
 
        go-cli devto 1 10
    ```
+4. Generate example environment file from `.env`:
+  
+  - Use command to generate `.env.example`.
+  
+  ```sh
+      go-cli cp_env
+  ```
+
+  Note: Use command inside folder contains `.env.example` file.
