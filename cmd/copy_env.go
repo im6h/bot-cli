@@ -31,28 +31,32 @@ func init() {
 	envDest = fmt.Sprintf("%s/%s", currentPath, ".env.example")
 }
 
+// TODO: execute function copy
+func copyLineByLine(file *os.File, str string) {
+	regex := regexp.MustCompile(`(?m).*=`)
+	name := regex.FindAllString(str, -1)
+
+	if len(name) < 1 {
+		_, err := file.WriteString(fmt.Sprintln(""))
+		if err != nil {
+			log.Printf("CopyLineByLine - WriteEmptyLine - Error: %s\n", err)
+		}
+
+		return
+	}
+
+	if _, err := file.WriteString(fmt.Sprintln(name[0])); err != nil {
+		log.Panicf("CopyLineByLine - WriteString - Error: %s", err)
+	}
+}
+
 // TODO: check file .env exist in current path
 func checkEnvExist() (err error) {
-
 	if _, err := os.Stat(envPath); err != nil {
 		return fmt.Errorf("checkEnvExist - Error: %s", err)
 	}
 
 	return nil
-}
-
-// TODO: execute function copy
-func copyLineByLine(file *os.File, str string) {
-	regex, err := regexp.Compile("/.*=/gm")
-	if err != nil {
-
-	}
-
-	name := regex.Split(str, 2)
-
-	if _, err := file.WriteString(fmt.Sprintln(name[0])); err != nil {
-		log.Panicf("CopyLineByLine - WriteString - Error: %s", err)
-	}
 }
 
 func CopyEnvExecute() {

@@ -14,7 +14,7 @@
 
 ### Feature:
 
-1. Fetch quote from anime api (for funny)
+1. Fetch quote from `anime api` (for funny)
 
    - Use command to fetch random quote:
 
@@ -61,4 +61,4 @@
       go-cli cp_env
    ```
 
-  Note: Use command inside folder contains `.env` file.
+   Note: Use command inside folder contains `.env` file.
