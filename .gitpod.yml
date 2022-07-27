@@ -1,0 +1,10 @@
+image: orai/cosmwasm-gitpod:0.11.7
+workspaceLocation: './go-cli'
+
+tasks:
+  - name: init-go-mod
+    init: go mod download
+
+vscode:
+  extensions:
+    - golang.vscode-go
