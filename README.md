@@ -62,3 +62,11 @@
    ```
 
    Note: Use command inside folder contains `.env` file.
+
+5. Show your current `IP Address`:
+  
+   - Use command to get current `IP Address`:
+  
+   ```sh
+      go-cli my_ip
+   ```
