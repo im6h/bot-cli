@@ -15,19 +15,49 @@ type quote struct {
 }
 
 var quoteAnimeCmd = &cobra.Command{
-	Use:   "anime [OPTIONS] [PAGE]",
+	Use:   "quote",
+	Short: "Fetch quote anime",
+	Long:  `Use to fetch anime's quote: random, with charactor, with anime`,
+	Run:   func(cmd *cobra.Command, args []string) {},
+}
+
+var quoteAnimeRandomCmd = &cobra.Command{
+	Use:   "random",
 	Short: "Fetch quote anime",
 	Long:  `Use to fetch anime's quote: random, with charactor, with anime`,
 	Run: func(cmd *cobra.Command, args []string) {
-		quoteAnimeCmdExecute(cmd, args)
+		fetchRandomQuote()
+	},
+}
+
+var quoteByNameAnimeCmd = &cobra.Command{
+	Use:   "anime",
+	Short: "Fetch quote anime",
+	Long:  `Use to fetch anime's quote: random, with charactor, with anime`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fetchQuoteByAnimeName(name, page)
+	},
+}
+
+var quoteByNameCharacterCmd = &cobra.Command{
+	Use:   "charactor",
+	Short: "Fetch quote anime",
+	Run: func(cmd *cobra.Command, args []string) {
+		fetchQuoteByCharactorName(name, page)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(quoteAnimeCmd)
 
-	quoteAnimeCmd.PersistentFlags().String("name", "", "Search quote by name of anime")
-	quoteAnimeCmd.PersistentFlags().String("charactor", "", "Search quote by name of charactor")
+	// sub-command
+	quoteAnimeCmd.AddCommand(quoteAnimeRandomCmd)
+	quoteAnimeCmd.AddCommand(quoteByNameAnimeCmd)
+	quoteAnimeCmd.AddCommand(quoteByNameCharacterCmd)
+
+	// binding flag
+	quoteAnimeCmd.PersistentFlags().StringVar(&name, "name", "", "Search quote by name of anime")
+	quoteAnimeCmd.PersistentFlags().StringVar(&page, "page", "1", "Search quote by name of charactor")
 }
 
 func fetchQuoteByCharactorName(name string, page string) {
@@ -38,7 +68,7 @@ func fetchQuoteByCharactorName(name string, page string) {
 
 	err := json.Unmarshal(body, &quotes)
 	if err != nil {
-		log.Panicf("error when unmarshaling data in fetchQuoteByCharacterName: %v\n", err)
+		log.Panicf("quote_anime - fetchQuoteByCharacterName - Error: %v\n", err)
 	}
 
 	for _, quote := range quotes {
@@ -54,13 +84,12 @@ func fetchQuoteByAnimeName(name string, page string) {
 
 	err := json.Unmarshal(body, &quotes)
 	if err != nil {
-		log.Panicf("error when unmarshaling data random quote: %v\n", err)
+		log.Panicf("quote_anime - fetchQuoteByAnimeName - Error: %v\n", err)
 	}
 
 	for _, quote := range quotes {
 		fmt.Printf(`"%s" by %s`+"\n", quote.Quote, quote.Character)
 	}
-
 }
 
 func fetchRandomQuote() {
@@ -71,40 +100,9 @@ func fetchRandomQuote() {
 
 	err := json.Unmarshal(body, &quote)
 	if err != nil {
-		log.Panicf("error when unmarshaling data random quote: %v\n", err)
+		log.Panicf("quote_anime - fetchRandomQuote - Error: %v\n", err)
 	}
 
 	fmt.Printf("%s\n", color.YellowString(quote.Quote))
 	fmt.Printf("\t %s in %s\n", color.RedString(quote.Character), color.BlueString(quote.Anime))
-}
-
-func quoteAnimeCmdExecute(cmd *cobra.Command, args []string) {
-	animeName, err := cmd.Flags().GetString("name")
-	if err != nil {
-		log.Fatalf("Error with use flags quoteAnimeExecute: %v", err)
-	}
-
-	charactor, err := cmd.Flags().GetString("charactor")
-	if err != nil {
-		log.Fatalf("Error with use flags quoteAnimeExecute: %v", err)
-	}
-
-	if animeName == "" && charactor == "" {
-		fetchRandomQuote()
-	}
-
-	var page string = "1"
-
-	if len(args) > 0 {
-		page = args[0]
-	}
-
-	if animeName != "" {
-		fetchQuoteByAnimeName(animeName, page)
-	}
-
-	if charactor != "" {
-		fetchQuoteByCharactorName(charactor, page)
-	}
-
 }

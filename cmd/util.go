@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -8,7 +9,17 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+// common
+var name string
+
+// quote_anime
+var page string
+
+// github
 var json jsoniter.API
+var ctx context.Context
+var token, description string
+var isPrivate, isAutoInit bool
 
 func init() {
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
