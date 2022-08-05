@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/fatih/color v1.13.0
 	github.com/google/go-github/v45 v45.2.0
+	github.com/json-iterator/go v1.1.12
 	github.com/m1/go-generate-password v0.2.0
 	github.com/samber/lo v1.25.0
 	github.com/spf13/cobra v1.4.0
@@ -18,6 +19,8 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.9 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect

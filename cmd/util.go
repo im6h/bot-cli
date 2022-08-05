@@ -4,7 +4,15 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	jsoniter "github.com/json-iterator/go"
 )
+
+var json jsoniter.API
+
+func init() {
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
+}
 
 func ResponseData(url string) []byte {
 	resp, err := http.Get(url)
