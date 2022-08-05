@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 
@@ -15,20 +14,21 @@ import (
 )
 
 var ctx context.Context
-var name, description string
+var token, name, description string
 var isPrivate, isAutoInit bool
-
-var githubApiCmd = &cobra.Command{
-	Use:   "ph",
-	Short: "A simple gitub cli to repository",
-	Run: func(cmd *cobra.Command, args []string) {
-		githubApiExecute(cmd, args)
-	},
-}
+var client *github.Client
 
 func init() {
 	ctx = context.Background()
+	token = os.Getenv("GITHUB_AUTH_TOKEN")
+	if token == "" {
+		log.Fatal("githubApiExecute - Error: Unauthorized: No token present")
+	}
+
 	rootCmd.AddCommand(githubApiCmd)
+
+	githubApiCmd.AddCommand(githubCmdCreate)
+	githubApiCmd.AddCommand(githubCmdDelete)
 
 	githubApiCmd.PersistentFlags().StringVar(&name, "name", "", "Repo name")
 	githubApiCmd.PersistentFlags().StringVar(&description, "description", "", "Repo description")
@@ -37,7 +37,48 @@ func init() {
 
 }
 
-func authorization(token string) (*github.Client, error) {
+var githubApiCmd = &cobra.Command{
+	Use:   "ph",
+	Short: "A simple gitub cli to repository",
+	Run: func(cmd *cobra.Command, args []string) {
+		client = authorization(token)
+	},
+}
+
+var githubCmdCreate = &cobra.Command{
+	Use:   "create",
+	Short: "create github repository",
+	Run: func(cmd *cobra.Command, args []string) {
+		client = authorization(token)
+		if name == "" {
+			log.Fatalf("Name repo is required!")
+		}
+
+		repo := &github.Repository{
+			Name:        &name,
+			Description: &description,
+			Private:     &isPrivate,
+			AutoInit:    &isAutoInit,
+		}
+
+		createRepo(client, repo)
+	},
+}
+
+var githubCmdDelete = &cobra.Command{
+	Use:   "delete",
+	Short: "delete github repository",
+	Run: func(cmd *cobra.Command, args []string) {
+		client = authorization(token)
+		if name == "" {
+			log.Fatalf("Name repo is required!")
+		}
+
+		deleteRepo(client, name)
+	},
+}
+
+func authorization(token string) *github.Client {
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
 	)
@@ -47,7 +88,7 @@ func authorization(token string) (*github.Client, error) {
 
 	user, resp, err := client.Users.Get(ctx, "")
 	if err != nil {
-		return nil, fmt.Errorf("authorization - GetUser - Error: %v\n", err)
+		log.Panicf("Unauthorize token: %s", err)
 	}
 
 	rate := strconv.Itoa(resp.Rate.Limit)
@@ -59,46 +100,30 @@ func authorization(token string) (*github.Client, error) {
 		log.Printf("Time token expiration: %v\n", color.YellowString(timeExpiration))
 	}
 
-	log.Printf("Login by username: %s\n", *user.Name)
-	return client, nil
+	log.Printf("Login by username: %s\n", user.GetLogin())
+	return client
 }
 
-func createNewRepo(client *github.Client, repo *github.Repository) {
+func createRepo(client *github.Client, repo *github.Repository) {
 	data, _, err := client.Repositories.Create(ctx, "", repo)
 	if err != nil {
-		log.Fatalf("createNewRepo - Error: %v", err)
+		log.Fatalf("createRepo - Error: %v", err)
 	}
 
-	log.Printf("Successfully created new repo: %v\n", color.GreenString(data.GetName()))
 	log.Printf("Repository name: %s\n", color.GreenString(data.GetName()))
-	log.Printf("Repository url: %s\n", color.GreenString(data.GetCloneURL()))
+	log.Printf("Repository url: %s\n", color.GreenString(data.GetGitURL()))
 }
 
-/*
-TODO: function delete repo with authorize token
-*/
-
-/*
-TODO: function fetch trending repo with authorize token
-*/
-
-func githubApiExecute(cmd *cobra.Command, args []string) {
-	token := os.Getenv("GITHUB_AUTH_TOKEN")
-	if token == "" {
-		log.Fatal("githubApiExecute - Error: Unauthorized: No token present")
-	}
-
-	client, err := authorization(token)
+func deleteRepo(client *github.Client, repoName string) {
+	user, _, err := client.Users.Get(ctx, "")
 	if err != nil {
-		log.Fatalf("githubApiExecute - Error: %v", err)
+		log.Panicf("Unauthorize token: %s", err)
 	}
 
-	repo := &github.Repository{
-		Name:        &name,
-		Description: &description,
-		Private:     &isPrivate,
-		AutoInit:    &isAutoInit,
+	_, err = client.Repositories.Delete(ctx, user.GetLogin(), repoName)
+	if err != nil {
+		log.Fatalf("deleteRepo - Error: %v\n", err)
 	}
 
-	createNewRepo(client, repo)
+	log.Printf("Deleted repo: %s\n", color.GreenString(repoName))
 }
