@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -9,25 +8,39 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var myIpError = func(err string) {
+	log.Fatalf("myIpCmdExecute - %v\n", err)
+}
+
 var myIpCmd = &cobra.Command{
-	Use:   "my_ip",
+	Use:   "ip",
 	Short: "Get current IP address of current device",
+	Run:   func(cmd *cobra.Command, args []string) {},
+}
+
+var myIpLocalCmd = &cobra.Command{
+	Use:   "local",
+	Short: "Get current IP in local",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		myIpCmdExecute(cmd, args)
+		fetchCurrentIpLocal()
 	},
 }
 
-var myIpError = func(err string) {
-	log.Fatalf("myIpCmdExecute - %v\n", err)
+var myIpPublicCmd = &cobra.Command{
+	Use:   "public",
+	Short: "Get public IP internet ",
+	Run: func(cmd *cobra.Command, args []string) {
+		fetchCurrentIpGlobal()
+	},
 }
 
 func init() {
 	rootCmd.AddCommand(myIpCmd)
 
 	// sub-command
-	myIpCmd.PersistentFlags().String("public", "", "Get public IP in global")
-	myIpCmd.PersistentFlags().String("local", "", "Get local IP")
+	myIpCmd.AddCommand(myIpLocalCmd)
+	myIpCmd.AddCommand(myIpPublicCmd)
 }
 
 func fetchCurrentIpLocal() {
@@ -49,29 +62,5 @@ func fetchCurrentIpGlobal() {
 	url := "https://api.ipify.org?format=text"
 	data := ResponseData(url)
 
-	fmt.Printf("IP Address: %s\n", color.GreenString(string(data)))
-}
-
-func myIpCmdExecute(cmd *cobra.Command, args []string) {
-	local, err := cmd.Flags().GetString("local")
-	if err != nil {
-		myIpError(fmt.Sprintf("Error: local %s", err))
-	}
-
-	public, err := cmd.Flags().GetString("public")
-	if err != nil {
-		myIpError(fmt.Sprintf("Error: public %s", err))
-	}
-
-	if local == "" && public == "" {
-		fetchCurrentIpLocal()
-	}
-
-	if local != "" {
-		fetchCurrentIpLocal()
-	}
-
-	if public != "" {
-		fetchCurrentIpGlobal()
-	}
+	log.Printf("IP Address: %s\n", color.GreenString(string(data)))
 }
