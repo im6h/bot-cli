@@ -13,9 +13,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var ctx context.Context
-var token, name, description string
-var isPrivate, isAutoInit bool
 var client *github.Client
 
 func init() {
