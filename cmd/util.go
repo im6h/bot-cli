@@ -10,10 +10,7 @@ import (
 )
 
 // common
-var name string
-
-// quote_anime
-var page string
+var name, page, limit string
 
 // github
 var json jsoniter.API
