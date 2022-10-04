@@ -35,12 +35,23 @@ var myIpPublicCmd = &cobra.Command{
 	},
 }
 
+var findPublicIp = &cobra.Command{
+	Use:   "parse", //
+	Short: "Parse DNS to Ip address",
+	Run: func(cmd *cobra.Command, args []string) {
+		parseDnsToIpAddress(dns)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(myIpCmd)
 
 	// sub-command
 	myIpCmd.AddCommand(myIpLocalCmd)
 	myIpCmd.AddCommand(myIpPublicCmd)
+	myIpCmd.AddCommand(findPublicIp)
+
+	myIpCmd.PersistentFlags().StringVar(&dns, "dns", "", "domain name server")
 }
 
 func fetchCurrentIpLocal() {
@@ -63,4 +74,14 @@ func fetchCurrentIpGlobal() {
 	data := ResponseData(url)
 
 	log.Printf("IP Address: %s\n", color.GreenString(string(data)))
+}
+
+func parseDnsToIpAddress(dnsName string) {
+	ips, _ := net.LookupIP(dnsName)
+
+	for _, ip := range ips {
+		if ipv4 := ip.To4(); ipv4 != nil {
+			log.Printf("IPv4: %s\n", color.GreenString(ipv4.String()))
+		}
+	}
 }

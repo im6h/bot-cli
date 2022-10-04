@@ -1,3 +1,11 @@
+### Development
+
+Generate new cli with the following command:
+
+   ```
+   cobra-cli add $COMMAND
+   ```
+
 ### Install
 
 1. Install program in global, use command:

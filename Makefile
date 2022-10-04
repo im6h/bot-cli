@@ -12,5 +12,3 @@ clean: ### clean folder after build
 
 publish: build install clean ### Install cli go use global
 .PHONY: publish
-
-

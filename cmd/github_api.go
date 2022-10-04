@@ -17,7 +17,7 @@ var client *github.Client
 
 func init() {
 	ctx = context.Background()
-	token = os.Getenv("GITHUB_AUTH_TOKEN")
+	token = os.Getenv("GH_PAT")
 	if token == "" {
 		log.Fatal("githubApiExecute - Error: Unauthorized: No token present")
 	}

@@ -15,7 +15,7 @@ var name, page, limit string
 // github
 var json jsoniter.API
 var ctx context.Context
-var token, description string
+var token, description, dns string
 var isPrivate, isAutoInit bool
 
 func init() {
